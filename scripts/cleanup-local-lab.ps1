@@ -10,6 +10,7 @@ $paths = @(
   ".local-lab.log",
   ".local-lab.err.log",
   ".local-lab.pid",
+  ".local-lab.port",
   "results"
 )
 

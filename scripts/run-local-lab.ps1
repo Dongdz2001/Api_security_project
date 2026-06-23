@@ -4,14 +4,20 @@ $root = Split-Path -Parent $PSScriptRoot
 $pidFile = Join-Path $root ".local-lab.pid"
 $logFile = Join-Path $root ".local-lab.log"
 $errFile = Join-Path $root ".local-lab.err.log"
+$port = if ($env:PORT) { $env:PORT } else { "8081" }
 
 Set-Location $root
 
 if (Test-Path $pidFile) {
   $oldPid = Get-Content $pidFile -ErrorAction SilentlyContinue
+  $savedPortFile = Join-Path $root ".local-lab.port"
+  $savedPort = if (Test-Path $savedPortFile) { Get-Content $savedPortFile } else { "" }
   if ($oldPid -and (Get-Process -Id $oldPid -ErrorAction SilentlyContinue)) {
-    Write-Host "Local lab is already running at http://localhost:8080 (PID $oldPid)."
-    exit 0
+    if ($savedPort -eq $port) {
+      Write-Host "Local lab is already running at http://localhost:$port (PID $oldPid)."
+      exit 0
+    }
+    Write-Host "Ignoring existing PID $oldPid because it belongs to a different or older lab port."
   }
   Remove-Item $pidFile -Force
 }
@@ -21,7 +27,8 @@ if (-not (Test-Path "node_modules")) {
   npm install
 }
 
-Write-Host "Starting local API security lab at http://localhost:8080 ..."
+$env:PORT = $port
+Write-Host "Starting local API security lab at http://localhost:$port ..."
 $process = Start-Process -FilePath "node" `
   -ArgumentList "scripts/local-lab-server.js" `
   -WorkingDirectory $root `
@@ -31,10 +38,11 @@ $process = Start-Process -FilePath "node" `
   -WindowStyle Hidden
 
 Set-Content -Path $pidFile -Value $process.Id
+Set-Content -Path (Join-Path $root ".local-lab.port") -Value $port
 Start-Sleep -Seconds 2
 
 try {
-  $health = Invoke-RestMethod -Uri "http://localhost:8080/health" -TimeoutSec 5
+  $health = Invoke-RestMethod -Uri "http://localhost:$port/health" -TimeoutSec 5
   Write-Host "Started. Health:"
   $health | ConvertTo-Json -Compress
 } catch {

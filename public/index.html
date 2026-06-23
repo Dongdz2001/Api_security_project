@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>API Security Lab</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <span class="brand-mark">API</span>
+          <div>
+            <h1>Security Lab</h1>
+            <p>OWASP API Top 10</p>
+          </div>
+        </div>
+
+        <section class="status-panel">
+          <div class="status-row">
+            <span>Gateway</span>
+            <strong id="healthStatus">Checking</strong>
+          </div>
+          <div class="status-row">
+            <span>Base URL</span>
+            <code id="baseUrl"></code>
+          </div>
+        </section>
+
+        <nav class="case-list" id="caseList" aria-label="Attack scenarios"></nav>
+
+        <div class="sidebar-actions">
+          <button class="button secondary" id="resetBtn" type="button">Reset lab</button>
+          <button class="button primary" id="runAllBtn" type="button">Run all</button>
+        </div>
+      </aside>
+
+      <section class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Microservices API attack and defense</p>
+            <h2 id="caseTitle">Broken Object Level Authorization</h2>
+          </div>
+          <div class="topbar-actions">
+            <button class="button secondary" id="runSelectedBtn" type="button">Run selected</button>
+          </div>
+        </header>
+
+        <section class="summary-grid" id="summaryGrid"></section>
+
+        <section class="comparison">
+          <article class="result-panel vulnerable">
+            <header>
+              <div>
+                <p class="panel-kicker">Vulnerable</p>
+                <h3 id="vulnerableName">Endpoint lỗi</h3>
+              </div>
+              <span class="status-badge pending" id="vulnerableStatus">Ready</span>
+            </header>
+            <div class="request-line" id="vulnerableRequest"></div>
+            <pre id="vulnerableBody">{}</pre>
+          </article>
+
+          <article class="result-panel secure">
+            <header>
+              <div>
+                <p class="panel-kicker">Secure</p>
+                <h3 id="secureName">Endpoint đã vá</h3>
+              </div>
+              <span class="status-badge pending" id="secureStatus">Ready</span>
+            </header>
+            <div class="request-line" id="secureRequest"></div>
+            <pre id="secureBody">{}</pre>
+          </article>
+        </section>
+
+        <section class="finding-band">
+          <div>
+            <p class="panel-kicker">Finding</p>
+            <h3 id="findingTitle"></h3>
+          </div>
+          <p id="findingText"></p>
+        </section>
+      </section>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

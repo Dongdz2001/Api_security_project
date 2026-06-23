@@ -4,6 +4,7 @@ const helmet = require("helmet");
 const jwt = require("jsonwebtoken");
 const rateLimit = require("express-rate-limit");
 const { z } = require("zod");
+const path = require("path");
 
 const PORT = Number(process.env.PORT || 8080);
 const WEAK_SECRET = "secret";
@@ -22,7 +23,7 @@ const ids = {
   orderBob: "90000000-0000-4000-8000-000000000002"
 };
 
-const users = [
+const initialUsers = [
   {
     id: ids.alice,
     email: "alice@example.com",
@@ -57,6 +58,8 @@ const users = [
     created_at: "2026-06-23T00:00:00.000Z"
   }
 ];
+
+let users = structuredClone(initialUsers);
 
 const products = [
   {
@@ -113,6 +116,7 @@ app.disable("x-powered-by");
 app.use(helmet());
 app.use(cors());
 app.use(express.json({ limit: "128kb" }));
+app.use(express.static(path.join(__dirname, "..", "public")));
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -234,6 +238,11 @@ function login(req, res, secure) {
 
 app.get("/health", (req, res) => {
   res.json({ gateway: "ok", mode: "local-node-lab" });
+});
+
+app.post("/lab/reset", (req, res) => {
+  users = structuredClone(initialUsers);
+  res.json({ status: "reset", message: "Local lab state has been restored." });
 });
 
 app.post("/vulnerable/auth/login", (req, res, next) => {

@@ -14,7 +14,7 @@
     "seed": "node database/seed.js",
     "attack": "node scripts/attack-lab.js",
     "test": "vitest run",
-    "lint": "node --check services/auth-service/server.js && node --check services/user-service/server.js && node --check services/product-service/server.js && node --check services/order-service/server.js && node --check services/payment-service/server.js && node --check scripts/attack-lab.js && node --check database/seed.js"
+    "lint": "node --check services/auth-service/server.js && node --check services/user-service/server.js && node --check services/product-service/server.js && node --check services/order-service/server.js && node --check services/payment-service/server.js && node --check scripts/attack-lab.js && node --check scripts/local-lab-server.js && node --check public/app.js && node --check database/seed.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
