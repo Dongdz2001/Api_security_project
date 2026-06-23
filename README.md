@@ -80,3 +80,29 @@ report/            Báo cáo LaTeX
 ```
 
 > Chỉ sử dụng endpoint `/vulnerable` trong môi trường lab cô lập.
+
+## Chạy gọn trên Windows không cần Docker
+
+Chế độ này dùng Node.js local và mô phỏng dữ liệu trong bộ nhớ để thực nghiệm nhanh. Nó vẫn dùng cùng endpoint `/vulnerable` và `/secure`.
+
+```powershell
+.\scripts\setup-local-lab.ps1
+.\scripts\run-local-lab.ps1
+.\scripts\run-experiment.ps1
+```
+
+Kết quả thực nghiệm được lưu trong thư mục `results/`.
+
+Dừng lab:
+
+```powershell
+.\scripts\stop-local-lab.ps1
+```
+
+Gỡ phần cài local phát sinh bởi lab:
+
+```powershell
+.\scripts\cleanup-local-lab.ps1
+```
+
+Lệnh cleanup sẽ xóa `node_modules`, `.local-lab.log`, `.local-lab.pid` và `results/`, nhưng giữ lại source code và Git history.

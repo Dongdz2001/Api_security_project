@@ -3,6 +3,10 @@ node_modules/
 npm-debug.log*
 coverage/
 dist/
+results/
+.local-lab.log
+.local-lab.err.log
+.local-lab.pid
 report/*.aux
 report/*.bbl
 report/*.blg

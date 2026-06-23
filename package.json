@@ -10,6 +10,7 @@
     "dev:products": "node services/product-service/server.js",
     "dev:orders": "node services/order-service/server.js",
     "dev:payments": "node services/payment-service/server.js",
+    "local:lab": "node scripts/local-lab-server.js",
     "seed": "node database/seed.js",
     "attack": "node scripts/attack-lab.js",
     "test": "vitest run",
