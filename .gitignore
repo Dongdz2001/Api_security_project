@@ -1,0 +1,12 @@
+node_modules/
+.env
+npm-debug.log*
+coverage/
+dist/
+report/*.aux
+report/*.bbl
+report/*.blg
+report/*.log
+report/*.out
+report/*.toc
+report/*.pdf

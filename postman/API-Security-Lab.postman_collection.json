@@ -1,0 +1,101 @@
+{
+  "info": {
+    "name": "API Security Microservices Lab",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "weakToken", "value": "" },
+    { "key": "secureToken", "value": "" },
+    { "key": "bobOrderId", "value": "90000000-0000-4000-8000-000000000002" },
+    { "key": "bobUserId", "value": "22222222-2222-4222-8222-222222222222" }
+  ],
+  "item": [
+    {
+      "name": "Vulnerable Login",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/vulnerable/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\":\"alice@example.com\",\"password\":\"Password123!\"}"
+        }
+      }
+    },
+    {
+      "name": "Secure Login",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/secure/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\":\"alice@example.com\",\"password\":\"Password123!\"}"
+        }
+      }
+    },
+    {
+      "name": "BOLA - Vulnerable Alice Reads Bob Order",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{weakToken}}" }],
+        "url": "{{baseUrl}}/vulnerable/orders/{{bobOrderId}}"
+      }
+    },
+    {
+      "name": "BOLA - Secure Alice Blocked",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{secureToken}}" }],
+        "url": "{{baseUrl}}/secure/orders/{{bobOrderId}}"
+      }
+    },
+    {
+      "name": "Excessive Data Exposure - Vulnerable",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{weakToken}}" }],
+        "url": "{{baseUrl}}/vulnerable/users/{{bobUserId}}"
+      }
+    },
+    {
+      "name": "Mass Assignment - Vulnerable Promote Role",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{weakToken}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": "{{baseUrl}}/vulnerable/users/me",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"display_name\":\"Alice Lab\",\"role\":\"admin\"}"
+        }
+      }
+    },
+    {
+      "name": "Injection - Vulnerable",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{weakToken}}" }],
+        "url": "{{baseUrl}}/vulnerable/products/search?q=%25'%20OR%20true%20--"
+      }
+    },
+    {
+      "name": "SSRF - Secure Block Localhost",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{secureToken}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": "{{baseUrl}}/secure/payments/preview-callback",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"callbackUrl\":\"http://localhost:3001/health\"}"
+        }
+      }
+    }
+  ]
+}

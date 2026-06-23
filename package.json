@@ -1,0 +1,34 @@
+{
+  "name": "ppnckh-api-security",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Demo microservices API security lab based on OWASP API Security Top 10 2023.",
+  "main": "index.js",
+  "scripts": {
+    "dev:auth": "node services/auth-service/server.js",
+    "dev:users": "node services/user-service/server.js",
+    "dev:products": "node services/product-service/server.js",
+    "dev:orders": "node services/order-service/server.js",
+    "dev:payments": "node services/payment-service/server.js",
+    "seed": "node database/seed.js",
+    "attack": "node scripts/attack-lab.js",
+    "test": "vitest run",
+    "lint": "node --check services/auth-service/server.js && node --check services/user-service/server.js && node --check services/product-service/server.js && node --check services/order-service/server.js && node --check services/payment-service/server.js && node --check scripts/attack-lab.js && node --check database/seed.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "express-rate-limit": "^7.3.1",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.12.0",
+    "pino": "^9.2.0",
+    "pino-http": "^10.1.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "supertest": "^7.0.0",
+    "vitest": "^4.1.9"
+  }
+}

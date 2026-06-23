@@ -1,0 +1,7 @@
+node_modules
+.env
+report/*.pdf
+report/*.aux
+report/*.log
+coverage
+.git

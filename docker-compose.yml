@@ -1,0 +1,90 @@
+x-service-env: &service-env
+  DATABASE_URL: ${DATABASE_URL:-postgres://api_lab:api_lab_password@postgres:5432/api_security_lab}
+  JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-change-me-to-a-long-random-secret-in-production}
+  JWT_ISSUER: ${JWT_ISSUER:-api-security-lab}
+  JWT_AUDIENCE: ${JWT_AUDIENCE:-api-security-demo}
+  WEAK_JWT_SECRET: ${WEAK_JWT_SECRET:-secret}
+  PAYMENT_WEBHOOK_ALLOWLIST: ${PAYMENT_WEBHOOK_ALLOWLIST:-webhook.site,example.com}
+  RATE_LIMIT_WINDOW_MS: ${RATE_LIMIT_WINDOW_MS:-60000}
+  RATE_LIMIT_MAX: ${RATE_LIMIT_MAX:-30}
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-api_security_lab}
+      POSTGRES_USER: ${POSTGRES_USER:-api_lab}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-api_lab_password}
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-api_lab} -d ${POSTGRES_DB:-api_security_lab}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  seed:
+    build: .
+    command: ["npm", "run", "seed"]
+    environment: *service-env
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  auth-service:
+    build: .
+    command: ["node", "services/auth-service/server.js"]
+    environment: *service-env
+    depends_on:
+      seed:
+        condition: service_completed_successfully
+
+  user-service:
+    build: .
+    command: ["node", "services/user-service/server.js"]
+    environment: *service-env
+    depends_on:
+      seed:
+        condition: service_completed_successfully
+
+  product-service:
+    build: .
+    command: ["node", "services/product-service/server.js"]
+    environment: *service-env
+    depends_on:
+      seed:
+        condition: service_completed_successfully
+
+  order-service:
+    build: .
+    command: ["node", "services/order-service/server.js"]
+    environment: *service-env
+    depends_on:
+      seed:
+        condition: service_completed_successfully
+
+  payment-service:
+    build: .
+    command: ["node", "services/payment-service/server.js"]
+    environment: *service-env
+    depends_on:
+      seed:
+        condition: service_completed_successfully
+
+  gateway:
+    image: nginx:1.27-alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./infra/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - auth-service
+      - user-service
+      - product-service
+      - order-service
+      - payment-service
+
+volumes:
+  postgres-data:
