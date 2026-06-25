@@ -12,6 +12,14 @@ Nội dung bám theo đề tài:
 Phân tích và ngăn chặn các cuộc tấn công nhắm vào API trong kiến trúc Microservices
 ```
 
+Các nhóm tài liệu đã được tích hợp:
+
+- OWASP API Security Top 10 2023.
+- NIST SP 800-204 về chiến lược bảo mật microservices.
+- NIST SP 800-204A về Service Mesh.
+- Kong Gateway security và secrets management.
+- Istio security và security best practices.
+
 Định dạng theo hướng dẫn trình bày đề cương/luận văn:
 
 - A4.
