@@ -64,6 +64,8 @@
 
 \setlist[itemize]{leftmargin=1.2cm,itemsep=0pt,topsep=2pt}
 \setlist[enumerate]{leftmargin=1.2cm,itemsep=0pt,topsep=2pt}
+\newcommand{\endpoint}[2]{\parbox[t]{5.2cm}{\footnotesize\texttt{#1}\\\footnotesize\texttt{#2}}}
+\newcommand{\endpointthree}[3]{\parbox[t]{5.2cm}{\footnotesize\texttt{#1}\\\footnotesize\texttt{#2}\\\footnotesize\texttt{#3}}}
 
 % ====== Thông tin cần sửa ======
 \newcommand{\studentname}{Nguyễn Văn A}
@@ -457,12 +459,12 @@ Mỗi nhóm chức năng có hai phiên bản endpoint:
 \toprule
 \textbf{Chức năng} & \textbf{Endpoint vulnerable} & \textbf{Endpoint secure}\\
 \midrule
-Đăng nhập & {\footnotesize\texttt{POST}\\\texttt{/vulnerable/auth/login}} & {\footnotesize\texttt{POST}\\\texttt{/secure/auth/login}}\\
-Xem user & {\footnotesize\texttt{GET}\\\texttt{/vulnerable/users/\{id\}}} & {\footnotesize\texttt{GET}\\\texttt{/secure/users/me}}\\
-Cập nhật user & {\footnotesize\texttt{PATCH}\\\texttt{/vulnerable/users/me}} & {\footnotesize\texttt{PATCH}\\\texttt{/secure/users/me}}\\
-Tìm kiếm product & {\footnotesize\texttt{GET}\\\texttt{/vulnerable/products/search}} & {\footnotesize\texttt{GET}\\\texttt{/secure/products/search}}\\
-Xem order & {\footnotesize\texttt{GET}\\\texttt{/vulnerable/orders/\{id\}}} & {\footnotesize\texttt{GET}\\\texttt{/secure/orders/\{id\}}}\\
-Payment callback & {\footnotesize\texttt{POST}\\\texttt{/vulnerable/payments/}\\\texttt{preview-callback}} & {\footnotesize\texttt{POST}\\\texttt{/secure/payments/}\\\texttt{preview-callback}}\\
+Đăng nhập & \endpoint{POST}{/vulnerable/auth/login} & \endpoint{POST}{/secure/auth/login}\\
+Xem user & \endpoint{GET}{/vulnerable/users/\{id\}} & \endpoint{GET}{/secure/users/me}\\
+Cập nhật user & \endpoint{PATCH}{/vulnerable/users/me} & \endpoint{PATCH}{/secure/users/me}\\
+Tìm kiếm product & \endpoint{GET}{/vulnerable/products/search} & \endpoint{GET}{/secure/products/search}\\
+Xem order & \endpoint{GET}{/vulnerable/orders/\{id\}} & \endpoint{GET}{/secure/orders/\{id\}}\\
+Payment callback & \endpointthree{POST}{/vulnerable/payments/}{preview-callback} & \endpointthree{POST}{/secure/payments/}{preview-callback}\\
 \bottomrule
 \end{longtable}
 
