@@ -2,8 +2,18 @@
 \documentclass[14pt,a4paper]{extarticle}
 
 \usepackage[a4paper,top=3cm,bottom=2cm,left=3cm,right=2cm]{geometry}
-\usepackage{fontspec}
-\usepackage{polyglossia}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[utf8]{inputenc}
+  \usepackage[T5]{fontenc}
+  \usepackage[vietnamese]{babel}
+  \usepackage{mathptmx}
+\else
+  \usepackage{fontspec}
+  \usepackage{polyglossia}
+  \setdefaultlanguage{vietnamese}
+  \setmainfont{Times New Roman}
+\fi
 \usepackage{setspace}
 \usepackage{indentfirst}
 \usepackage{titlesec}
@@ -15,8 +25,6 @@
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta,positioning,shapes.geometric}
 
-\setdefaultlanguage{vietnamese}
-\setmainfont{Times New Roman}
 \onehalfspacing
 \setlength{\parindent}{1cm}
 \setlength{\parskip}{0pt}

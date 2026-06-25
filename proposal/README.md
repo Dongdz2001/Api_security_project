@@ -23,6 +23,6 @@ xelatex main.tex
 xelatex main.tex
 ```
 
-Trên Overleaf, vào **Menu -> Compiler** và chọn **XeLaTeX** nếu thấy lỗi `fontspec package requires either XeTeX or LuaTeX`.
+Trên Overleaf, nên vào **Menu -> Compiler** và chọn **XeLaTeX** để dùng đúng Times New Roman. File cũng đã có fallback cho `pdfLaTeX`, nên nếu Overleaf vẫn dùng compiler mặc định thì sẽ không còn lỗi `fontspec package requires either XeTeX or LuaTeX`.
 
 Máy hiện tại chưa có bộ LaTeX (`xelatex`, `pdflatex`, `lualatex`), nên chưa render PDF trực tiếp tại đây.
