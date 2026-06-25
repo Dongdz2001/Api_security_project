@@ -1,0 +1,397 @@
+\documentclass[14pt,a4paper]{extarticle}
+
+\usepackage[a4paper,top=3cm,bottom=2cm,left=3cm,right=2cm]{geometry}
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\usepackage{setspace}
+\usepackage{indentfirst}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric}
+
+\setdefaultlanguage{vietnamese}
+\setmainfont{Times New Roman}
+\onehalfspacing
+\setlength{\parindent}{1cm}
+\setlength{\parskip}{0pt}
+\renewcommand{\arraystretch}{1.25}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  citecolor=black,
+  urlcolor=black
+}
+
+\titleformat{\section}
+  {\normalfont\bfseries\centering\MakeUppercase}
+  {\Roman{section}.}{0.5em}{}
+\titleformat{\subsection}
+  {\normalfont\bfseries}
+  {\arabic{subsection}.}{0.5em}{}
+\titleformat{\subsubsection}
+  {\normalfont\bfseries}
+  {\alph{subsubsection})}{0.5em}{}
+
+\setlist[itemize]{leftmargin=1.2cm,itemsep=0pt,topsep=2pt}
+\setlist[enumerate]{leftmargin=1.2cm,itemsep=0pt,topsep=2pt}
+
+% ====== Thông tin cần sửa ======
+\newcommand{\studentname}{Nguyễn Văn A}
+\newcommand{\studentclass}{Khóa: \ldots}
+\newcommand{\major}{An toàn thông tin}
+\newcommand{\majorcode}{8480202}
+\newcommand{\supervisorone}{TS. Nguyễn Văn B -- Đơn vị công tác}
+\newcommand{\supervisortwo}{}
+\newcommand{\city}{HÀ NỘI}
+\newcommand{\yearnumber}{2026}
+\newcommand{\thesistitle}{NGHIÊN CỨU GIẢI PHÁP PHÁT HIỆN VÀ PHÒNG CHỐNG TẤN CÔNG API TRONG HỆ THỐNG MICROSERVICES DỰA TRÊN OWASP API SECURITY TOP 10}
+
+\newcommand{\coverHeader}{
+  \begin{center}
+    {\MakeUppercase{Ban Cơ yếu Chính phủ}}\\
+    {\bfseries\MakeUppercase{Học viện Kỹ thuật Mật mã}}
+  \end{center}
+}
+
+\newcommand{\mainCover}{
+  \thispagestyle{empty}
+  \coverHeader
+  \vspace{3.2cm}
+  \begin{center}
+    {\bfseries\MakeUppercase{\studentname}}\\[3.2cm]
+    {\bfseries\fontsize{20pt}{24pt}\selectfont ĐỀ CƯƠNG LUẬN VĂN THẠC SĨ}\\[1.2cm]
+    {\bfseries ĐỀ TÀI:}\\[0.5cm]
+    {\bfseries\MakeUppercase{\thesistitle}}\\[1.2cm]
+    {\bfseries Chuyên ngành: \major}\\[0.3cm]
+    {\bfseries Mã số: \majorcode}\\
+    \vfill
+    {\bfseries \city -- \yearnumber}
+  \end{center}
+  \newpage
+}
+
+\newcommand{\subCover}{
+  \thispagestyle{empty}
+  \coverHeader
+  \vspace{2.5cm}
+  \begin{center}
+    {\bfseries\fontsize{20pt}{24pt}\selectfont ĐỀ CƯƠNG LUẬN VĂN THẠC SĨ}\\[1.2cm]
+    {\bfseries ĐỀ TÀI:}\\[0.5cm]
+    {\bfseries\MakeUppercase{\thesistitle}}\\[1.1cm]
+  \end{center}
+
+  \noindent{\bfseries Chuyên ngành:} \major\\
+  {\bfseries Mã số:} \majorcode\\[0.5cm]
+  {\bfseries Họ và tên học viên:} \studentname\\
+  {\bfseries \studentclass}\\[0.5cm]
+  {\bfseries Người hướng dẫn khoa học 1:} \supervisorone\\
+  \ifx\supervisortwo\empty
+  \else
+    {\bfseries Người hướng dẫn khoa học 2:} \supervisortwo\\
+  \fi
+
+  \vfill
+  \begin{center}
+    {\bfseries \city -- \yearnumber}
+  \end{center}
+  \newpage
+}
+
+\begin{document}
+
+\mainCover
+\subCover
+
+\pagenumbering{roman}
+\tableofcontents
+\newpage
+
+\section*{Danh mục các từ viết tắt}
+\addcontentsline{toc}{section}{Danh mục các từ viết tắt}
+\begin{longtable}{p{3cm}p{11cm}}
+\toprule
+\textbf{Từ viết tắt} & \textbf{Ý nghĩa}\\
+\midrule
+API & Application Programming Interface -- giao diện lập trình ứng dụng\\
+JWT & JSON Web Token -- chuẩn biểu diễn token xác thực dạng JSON\\
+RBAC & Role-Based Access Control -- kiểm soát truy cập dựa trên vai trò\\
+ABAC & Attribute-Based Access Control -- kiểm soát truy cập dựa trên thuộc tính\\
+BOLA & Broken Object Level Authorization -- lỗi phân quyền ở mức đối tượng\\
+DTO & Data Transfer Object -- đối tượng dữ liệu dùng cho phản hồi hoặc trao đổi giữa lớp ứng dụng\\
+SSRF & Server-Side Request Forgery -- tấn công giả mạo yêu cầu từ phía máy chủ\\
+OWASP & Open Worldwide Application Security Project\\
+\bottomrule
+\end{longtable}
+\newpage
+
+\pagenumbering{arabic}
+
+\section{Mở đầu}
+
+\subsection{Tính cấp thiết của đề tài}
+Trong các hệ thống phần mềm hiện đại, API là lớp giao tiếp quan trọng giữa ứng dụng web, ứng dụng di động, hệ thống đối tác và các dịch vụ nội bộ. Khi kiến trúc microservices được sử dụng, số lượng API tăng lên nhanh chóng do mỗi dịch vụ thường đảm nhiệm một miền nghiệp vụ riêng như xác thực, người dùng, sản phẩm, đơn hàng hoặc thanh toán. Điều này giúp hệ thống linh hoạt, dễ mở rộng, nhưng đồng thời làm bề mặt tấn công trở nên lớn hơn.
+
+Các cuộc tấn công vào API có thể khai thác những lỗi tưởng như nhỏ trong thiết kế và lập trình: thiếu kiểm tra quyền sở hữu tài nguyên, xác thực JWT yếu, trả thừa dữ liệu nhạy cảm, cho phép cập nhật trường không được phép, ghép chuỗi truy vấn trực tiếp gây injection, không giới hạn tốc độ truy cập hoặc cho phép máy chủ gọi tới URL do người dùng nhập. OWASP API Security Top 10 2023 đã chỉ ra nhiều nhóm rủi ro phổ biến đối với API hiện đại, trong đó có các lỗi liên quan đến phân quyền, xác thực, kiểm soát tài nguyên và luồng nghiệp vụ \cite{owasp2023}.
+
+Tại Việt Nam, nhiều hệ thống dịch vụ công, tài chính, thương mại điện tử và quản trị doanh nghiệp đang chuyển dần sang kiến trúc microservices hoặc API-first. Vì vậy, việc nghiên cứu, mô phỏng, phân tích và đề xuất giải pháp phòng chống tấn công API trong kiến trúc microservices có ý nghĩa thực tiễn cao. Đề tài không chỉ dừng ở khảo sát lý thuyết mà còn xây dựng môi trường thực nghiệm có thể tấn công thử trong phạm vi lab, vá lỗi và đánh giá kết quả trước/sau khi áp dụng biện pháp bảo vệ.
+
+\subsection{Mục tiêu nghiên cứu của đề tài}
+Mục tiêu tổng quát của đề tài là nghiên cứu các dạng tấn công phổ biến nhắm vào API trong kiến trúc microservices và đề xuất giải pháp phát hiện, phòng chống dựa trên OWASP API Security Top 10 2023.
+
+Các mục tiêu cụ thể gồm:
+\begin{itemize}
+  \item Nghiên cứu cơ sở lý thuyết về API, microservices, API Gateway, JWT, kiểm soát truy cập, rate limiting, logging và monitoring.
+  \item Phân tích một số nhóm rủi ro API tiêu biểu theo OWASP API Security Top 10 2023.
+  \item Xây dựng hệ thống microservices demo gồm Auth Service, User Service, Product Service, Order Service, Payment Service và API Gateway.
+  \item Cài đặt phiên bản có lỗ hổng để minh họa các tấn công như BOLA, Broken Authentication, Excessive Data Exposure, Mass Assignment, Injection, Unrestricted Resource Consumption và SSRF.
+  \item Cài đặt phiên bản phòng chống bằng JWT chuẩn, kiểm tra ownership, RBAC/ABAC, DTO, whitelist field, validate input, prepared statement, rate limit, logging và chính sách outbound.
+  \item Đánh giá hiệu quả phòng chống thông qua so sánh kết quả khai thác trước và sau khi vá.
+\end{itemize}
+
+\subsection{Đối tượng và phạm vi nghiên cứu}
+Đối tượng nghiên cứu là các API REST trong hệ thống microservices và các cơ chế bảo vệ API ở tầng service và tầng API Gateway.
+
+Phạm vi nghiên cứu gồm:
+\begin{itemize}
+  \item Tập trung vào hệ thống microservices quy mô nhỏ phục vụ thực nghiệm.
+  \item Tập trung vào một số nhóm lỗi API phổ biến có thể minh họa rõ bằng mã nguồn và request/response.
+  \item Thực nghiệm chỉ được thực hiện trong môi trường lab cục bộ, không áp dụng lên hệ thống thật khi chưa được cấp phép.
+  \item Không đi sâu triển khai production đầy đủ như Kubernetes, service mesh, SIEM thương mại hoặc WAF chuyên dụng; các nội dung này được xem là hướng mở rộng.
+\end{itemize}
+
+\subsection{Các nhiệm vụ chính cần thực hiện}
+\begin{enumerate}
+  \item Khảo sát tài liệu về OWASP API Security Top 10 2023, JWT, mô hình kiểm soát truy cập và bảo vệ API.
+  \item Thiết kế kiến trúc hệ thống thực nghiệm microservices.
+  \item Xây dựng các API nghiệp vụ mẫu: đăng nhập, xem hồ sơ người dùng, tìm kiếm sản phẩm, xem đơn hàng và callback thanh toán.
+  \item Cài đặt các endpoint có lỗ hổng và endpoint đã vá để so sánh.
+  \item Xây dựng bộ kịch bản tấn công trong lab và giao diện trực quan phục vụ demo.
+  \item Thu thập kết quả thực nghiệm, phân tích log, so sánh hiệu quả trước/sau.
+  \item Viết báo cáo luận văn và đề xuất hướng phát triển.
+\end{enumerate}
+
+\subsection{Kết quả dự kiến}
+Kết quả dự kiến của đề tài gồm:
+\begin{itemize}
+  \item Một hệ thống microservices demo có thể chạy bằng Docker Compose hoặc chế độ local lab.
+  \item Một giao diện trực quan giúp trình bày các kịch bản tấn công và phòng chống API.
+  \item Bộ script hoặc collection phục vụ kiểm thử API.
+  \item Bảng phân tích lỗ hổng, nguyên nhân, ảnh hưởng và biện pháp khắc phục.
+  \item Báo cáo luận văn trình bày cơ sở lý thuyết, thiết kế hệ thống, thực nghiệm tấn công, giải pháp phòng chống và đánh giá kết quả.
+\end{itemize}
+
+\subsection{Phương pháp và công cụ nghiên cứu}
+Đề tài sử dụng các phương pháp nghiên cứu sau:
+\begin{itemize}
+  \item Phương pháp nghiên cứu tài liệu: khảo sát OWASP API Security Top 10, tài liệu JWT, API Gateway và các nghiên cứu liên quan.
+  \item Phương pháp mô hình hóa: thiết kế kiến trúc microservices và luồng request qua API Gateway.
+  \item Phương pháp thực nghiệm: xây dựng lab, tấn công thử các endpoint có lỗ hổng và kiểm tra bản đã vá.
+  \item Phương pháp so sánh: so sánh trạng thái trước/sau khi áp dụng biện pháp phòng chống.
+\end{itemize}
+
+Công cụ dự kiến sử dụng:
+\begin{itemize}
+  \item Node.js/Express hoặc NestJS cho backend service.
+  \item PostgreSQL cho cơ sở dữ liệu thực nghiệm.
+  \item Nginx hoặc Kong Gateway cho API Gateway.
+  \item JWT, RBAC/ABAC, validation schema, prepared statement, rate limiting.
+  \item Postman, OWASP ZAP hoặc script tự động để kiểm thử API.
+  \item Docker Compose phục vụ triển khai lab.
+\end{itemize}
+
+\section{Dự kiến các chương mục}
+
+\subsection*{Mục lục dự kiến}
+\addcontentsline{toc}{subsection}{Mục lục dự kiến}
+
+\subsubsection*{Chương 1: Tổng quan về API Security trong kiến trúc Microservices}
+Chương này trình bày tổng quan về API, microservices, API Gateway và vai trò của API trong hệ thống hiện đại. Chương cũng phân tích lý do API trở thành bề mặt tấn công lớn trong kiến trúc microservices.
+
+Nội dung chính:
+\begin{itemize}
+  \item Khái niệm API và REST API.
+  \item Tổng quan kiến trúc microservices.
+  \item Vai trò của API Gateway.
+  \item Bề mặt tấn công API trong hệ thống microservices.
+  \item Tổng quan OWASP API Security Top 10 2023.
+\end{itemize}
+
+\subsubsection*{Chương 2: Cơ sở lý thuyết về các tấn công API và cơ chế phòng chống}
+Chương này trình bày các nhóm lỗ hổng API được lựa chọn để nghiên cứu và các cơ chế bảo vệ tương ứng.
+
+Nội dung chính:
+\begin{itemize}
+  \item Broken Object Level Authorization.
+  \item Broken Authentication và bảo vệ JWT.
+  \item Excessive Data Exposure/Broken Object Property Level Authorization.
+  \item Mass Assignment.
+  \item Injection.
+  \item Unrestricted Resource Consumption.
+  \item SSRF và kiểm soát kết nối outbound.
+  \item Logging, monitoring và cảnh báo bất thường.
+\end{itemize}
+
+\subsubsection*{Chương 3: Thiết kế và xây dựng hệ thống thực nghiệm}
+Chương này trình bày kiến trúc hệ thống demo, các thành phần microservices, cơ sở dữ liệu và luồng nghiệp vụ.
+
+Nội dung chính:
+\begin{itemize}
+  \item Mô hình kiến trúc hệ thống.
+  \item Thiết kế Auth Service, User Service, Product Service, Order Service và Payment Service.
+  \item Thiết kế API Gateway.
+  \item Thiết kế cơ sở dữ liệu thực nghiệm.
+  \item Thiết kế bộ endpoint vulnerable và secure.
+  \item Thiết kế giao diện trực quan phục vụ demo.
+\end{itemize}
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[
+  node distance=1.2cm,
+  box/.style={rectangle,draw,rounded corners,minimum width=3.2cm,minimum height=0.85cm,align=center},
+  db/.style={cylinder,draw,shape border rotate=90,aspect=0.25,minimum width=2.2cm,minimum height=1.1cm,align=center},
+  arrow/.style={-Latex,thick}
+]
+\node[box] (client) {Postman / UI demo / Script};
+\node[box,below=of client] (gateway) {API Gateway};
+\node[box,below left=1cm and 3.8cm of gateway] (auth) {Auth Service};
+\node[box,below left=1cm and 1.6cm of gateway] (user) {User Service};
+\node[box,below=1cm of gateway] (product) {Product Service};
+\node[box,below right=1cm and 1.6cm of gateway] (order) {Order Service};
+\node[box,below right=1cm and 3.8cm of gateway] (payment) {Payment Service};
+\node[db,below=1.8cm of product] (dbnode) {Database};
+\draw[arrow] (client) -- (gateway);
+\draw[arrow] (gateway) -- (auth);
+\draw[arrow] (gateway) -- (user);
+\draw[arrow] (gateway) -- (product);
+\draw[arrow] (gateway) -- (order);
+\draw[arrow] (gateway) -- (payment);
+\draw[arrow] (auth) -- (dbnode);
+\draw[arrow] (user) -- (dbnode);
+\draw[arrow] (product) -- (dbnode);
+\draw[arrow] (order) -- (dbnode);
+\end{tikzpicture}
+\caption{Kiến trúc hệ thống thực nghiệm dự kiến}
+\end{figure}
+
+\subsubsection*{Chương 4: Phân tích tấn công API trong môi trường lab}
+Chương này trình bày từng kịch bản tấn công trong môi trường kiểm soát, bao gồm điều kiện khai thác, request/response minh họa, nguyên nhân và ảnh hưởng.
+
+Nội dung chính:
+\begin{itemize}
+  \item Tấn công BOLA bằng cách thay đổi object id.
+  \item Khai thác JWT yếu hoặc token không được kiểm tra đầy đủ.
+  \item Khai thác API trả thừa dữ liệu nhạy cảm.
+  \item Khai thác Mass Assignment để leo thang quyền.
+  \item Khai thác Injection trong chức năng tìm kiếm.
+  \item Gây quá tải do thiếu rate limit.
+  \item Khai thác SSRF qua callback URL.
+\end{itemize}
+
+\subsubsection*{Chương 5: Giải pháp phát hiện và phòng chống}
+Chương này đề xuất và triển khai các biện pháp bảo vệ API ở cả tầng Gateway và tầng service.
+
+Nội dung chính:
+\begin{itemize}
+  \item Kiểm tra JWT chuẩn: chữ ký, thuật toán, thời hạn, issuer và audience.
+  \item Kiểm tra quyền sở hữu tài nguyên và phân quyền RBAC/ABAC.
+  \item Sử dụng DTO/response schema để giảm lộ dữ liệu.
+  \item Whitelist field và validate input.
+  \item Prepared statement để chống Injection.
+  \item Rate limit, quota, timeout và circuit breaker.
+  \item SSRF guard: allowlist domain, chặn private IP và kiểm soát egress.
+  \item Audit log và cảnh báo hành vi bất thường.
+\end{itemize}
+
+\subsubsection*{Chương 6: Đánh giá kết quả và kết luận}
+Chương này đánh giá hiệu quả của các biện pháp phòng chống dựa trên kết quả thực nghiệm trước/sau khi vá.
+
+Nội dung chính:
+\begin{itemize}
+  \item Bảng so sánh các kịch bản tấn công trước và sau khi vá.
+  \item Đánh giá mức độ giảm rủi ro.
+  \item Đánh giá ảnh hưởng đến hiệu năng và khả năng vận hành.
+  \item Hạn chế của đề tài.
+  \item Kết luận và hướng phát triển.
+\end{itemize}
+
+\section{Kế hoạch thực hiện}
+
+Luận văn dự kiến được hoàn thành trong khoảng 6 tháng, tương đương 25 tuần kể từ khi có quyết định giao đề tài. Kế hoạch thực hiện dự kiến như Bảng \ref{tab:plan}.
+
+\begin{longtable}{>{\centering\arraybackslash}p{1.2cm}p{7.8cm}p{4.3cm}}
+\caption{Kế hoạch thực hiện luận văn dự kiến}
+\label{tab:plan}\\
+\toprule
+\textbf{STT} & \textbf{Nội dung thực hiện} & \textbf{Thời gian dự kiến}\\
+\midrule
+\endfirsthead
+\toprule
+\textbf{STT} & \textbf{Nội dung thực hiện} & \textbf{Thời gian dự kiến}\\
+\midrule
+\endhead
+1 & Xây dựng đề cương chi tiết, xác định phạm vi nghiên cứu, chuẩn hóa tên đề tài và danh mục tài liệu tham khảo ban đầu & Tuần 1\\
+2 & Nghiên cứu cơ sở lý thuyết về API Security, microservices, OWASP API Security Top 10, JWT, RBAC/ABAC, API Gateway & Tuần 2--5\\
+3 & Thiết kế kiến trúc hệ thống thực nghiệm, thiết kế cơ sở dữ liệu, thiết kế luồng nghiệp vụ và danh sách endpoint & Tuần 6--8\\
+4 & Xây dựng hệ thống microservices demo và bộ API có lỗ hổng & Tuần 9--12\\
+5 & Xây dựng kịch bản tấn công trong lab, thu thập request/response và log minh họa & Tuần 13--15\\
+6 & Cài đặt các biện pháp phòng chống: JWT chuẩn, ownership check, DTO, validation, prepared statement, rate limit, SSRF guard, logging & Tuần 16--19\\
+7 & Đánh giá kết quả trước/sau khi vá, hoàn thiện bảng so sánh, phân tích hiệu quả và hạn chế & Tuần 20--22\\
+8 & Viết và hoàn thiện luận văn, chỉnh sửa theo góp ý của người hướng dẫn & Tuần 23--24\\
+9 & Hoàn chỉnh luận văn, kiểm tra hình thức, tài liệu tham khảo, chuẩn bị bảo vệ & Tuần 25\\
+\bottomrule
+\end{longtable}
+
+\section{Tài liệu tham khảo xây dựng đề cương}
+
+Tài liệu tham khảo trong đề cương được trích dẫn theo số thứ tự đặt trong ngoặc vuông, phù hợp với hướng dẫn trình bày đề cương luận văn thạc sĩ.
+
+\begin{thebibliography}{99}
+
+\bibitem{owasp2023}
+OWASP Foundation (2023), \textit{OWASP API Security Top 10 -- 2023}, \url{https://owasp.org/API-Security/editions/2023/en/0x11-t10/}.
+
+\bibitem{jwt2015}
+Jones M., Bradley J., Sakimura N. (2015), \textit{RFC 7519: JSON Web Token (JWT)}, Internet Engineering Task Force, \url{https://datatracker.ietf.org/doc/html/rfc7519}.
+
+\bibitem{nist2020}
+National Institute of Standards and Technology (2020), \textit{NIST Special Publication 800-207: Zero Trust Architecture}, NIST, \url{https://csrc.nist.gov/pubs/sp/800/207/final}.
+
+\bibitem{newman2015}
+Newman S. (2015), \textit{Building Microservices: Designing Fine-Grained Systems}, O'Reilly Media, Sebastopol.
+
+\bibitem{richardson2018}
+Richardson C. (2018), \textit{Microservices Patterns: With examples in Java}, Manning Publications, Shelter Island.
+
+\bibitem{fielding2000}
+Fielding R. T. (2000), \textit{Architectural Styles and the Design of Network-based Software Architectures}, Doctoral dissertation, University of California, Irvine.
+
+\end{thebibliography}
+
+\newpage
+\section*{Xác nhận của người hướng dẫn khoa học}
+\addcontentsline{toc}{section}{Xác nhận của người hướng dẫn khoa học}
+
+\vspace{1cm}
+\noindent Tôi đồng ý thông qua đề cương luận văn thạc sĩ với đề tài:
+
+\begin{center}
+{\bfseries \MakeUppercase{\thesistitle}}
+\end{center}
+
+\vspace{2cm}
+\begin{flushright}
+\begin{tabular}{c}
+\city, ngày \hspace{1cm} tháng \hspace{1cm} năm \yearnumber\\[0.4cm]
+\textbf{Người hướng dẫn khoa học}\\[2.5cm]
+\supervisorone
+\end{tabular}
+\end{flushright}
+
+\end{document}

@@ -1,0 +1,657 @@
+\documentclass[14pt,a4paper]{extreport}
+
+\usepackage[a4paper,top=3cm,bottom=2cm,left=3cm,right=2cm]{geometry}
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\usepackage{setspace}
+\usepackage{indentfirst}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric}
+
+\setdefaultlanguage{vietnamese}
+\setmainfont{Times New Roman}
+\onehalfspacing
+\setlength{\parindent}{1cm}
+\setlength{\parskip}{0pt}
+\renewcommand{\arraystretch}{1.25}
+\renewcommand{\bibname}{Tài liệu tham khảo}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  citecolor=black,
+  urlcolor=black
+}
+
+\definecolor{codebg}{RGB}{248,248,248}
+\definecolor{coderule}{RGB}{210,210,210}
+\lstset{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single,
+  backgroundcolor=\color{codebg},
+  rulecolor=\color{coderule},
+  columns=fullflexible,
+  showstringspaces=false
+}
+
+\titleformat{\chapter}
+  {\normalfont\bfseries\centering\MakeUppercase}
+  {CHƯƠNG \thechapter.}{0.5em}{}
+\titleformat{\section}
+  {\normalfont\bfseries}
+  {\thesection.}{0.5em}{}
+\titleformat{\subsection}
+  {\normalfont\bfseries}
+  {\thesubsection.}{0.5em}{}
+
+\setlist[itemize]{leftmargin=1.2cm,itemsep=0pt,topsep=2pt}
+\setlist[enumerate]{leftmargin=1.2cm,itemsep=0pt,topsep=2pt}
+
+% ====== Thông tin cần sửa ======
+\newcommand{\studentname}{Nguyễn Văn A}
+\newcommand{\studentclass}{Khóa: \ldots}
+\newcommand{\major}{An toàn thông tin}
+\newcommand{\majorcode}{8480202}
+\newcommand{\supervisorone}{TS. Nguyễn Văn B -- Đơn vị công tác}
+\newcommand{\city}{HÀ NỘI}
+\newcommand{\yearnumber}{2026}
+\newcommand{\thesistitle}{NGHIÊN CỨU GIẢI PHÁP PHÁT HIỆN VÀ PHÒNG CHỐNG TẤN CÔNG API TRONG HỆ THỐNG MICROSERVICES DỰA TRÊN OWASP API SECURITY TOP 10}
+
+\newcommand{\coverHeader}{
+  \begin{center}
+    {\MakeUppercase{Ban Cơ yếu Chính phủ}}\\
+    {\bfseries\MakeUppercase{Học viện Kỹ thuật Mật mã}}
+  \end{center}
+}
+
+\begin{document}
+
+\thispagestyle{empty}
+\coverHeader
+\vspace{2.8cm}
+\begin{center}
+  {\bfseries\MakeUppercase{\studentname}}\\[2.8cm]
+  {\bfseries\fontsize{20pt}{24pt}\selectfont LUẬN VĂN THẠC SĨ}\\[0.8cm]
+  {\bfseries ĐỀ TÀI:}\\[0.4cm]
+  {\bfseries\MakeUppercase{\thesistitle}}\\[1.0cm]
+  {\bfseries Chuyên ngành: \major}\\[0.3cm]
+  {\bfseries Mã số: \majorcode}\\
+  \vfill
+  {\bfseries \city -- \yearnumber}
+\end{center}
+\newpage
+
+\thispagestyle{empty}
+\coverHeader
+\vspace{2.2cm}
+\begin{center}
+  {\bfseries\fontsize{20pt}{24pt}\selectfont LUẬN VĂN THẠC SĨ}\\[0.8cm]
+  {\bfseries ĐỀ TÀI:}\\[0.4cm]
+  {\bfseries\MakeUppercase{\thesistitle}}\\[1.0cm]
+\end{center}
+
+\noindent{\bfseries Chuyên ngành:} \major\\
+{\bfseries Mã số:} \majorcode\\[0.4cm]
+{\bfseries Họ và tên học viên:} \studentname\\
+{\bfseries \studentclass}\\[0.4cm]
+{\bfseries Người hướng dẫn khoa học:} \supervisorone
+
+\vfill
+\begin{center}
+  {\bfseries \city -- \yearnumber}
+\end{center}
+\newpage
+
+\pagenumbering{roman}
+
+\chapter*{Lời cam đoan}
+\addcontentsline{toc}{chapter}{Lời cam đoan}
+Tôi xin cam đoan nội dung luận văn là kết quả nghiên cứu của bản thân dưới sự hướng dẫn của giảng viên hướng dẫn khoa học. Các tài liệu, số liệu và kết quả tham khảo trong luận văn được trích dẫn rõ nguồn gốc. Các kịch bản tấn công được thực hiện trong môi trường lab cục bộ, phục vụ mục đích học tập và nghiên cứu an toàn thông tin.
+
+\vspace{1.5cm}
+\begin{flushright}
+\begin{tabular}{c}
+\city, ngày \hspace{1cm} tháng \hspace{1cm} năm \yearnumber\\[0.4cm]
+\textbf{Học viên}\\[2.2cm]
+\studentname
+\end{tabular}
+\end{flushright}
+\newpage
+
+\chapter*{Tóm tắt}
+\addcontentsline{toc}{chapter}{Tóm tắt}
+Luận văn nghiên cứu các nguy cơ tấn công nhắm vào API trong kiến trúc microservices và đề xuất giải pháp phát hiện, phòng chống dựa trên OWASP API Security Top 10 2023. Nội dung nghiên cứu tập trung vào các nhóm lỗi tiêu biểu gồm Broken Object Level Authorization, Broken Authentication, Excessive Data Exposure/Broken Object Property Level Authorization, Mass Assignment, Injection, Unrestricted Resource Consumption và Server-Side Request Forgery.
+
+Để kiểm chứng, luận văn xây dựng một hệ thống thực nghiệm gồm Auth Service, User Service, Product Service, Order Service, Payment Service và API Gateway. Hệ thống có hai nhóm endpoint: nhóm \texttt{/vulnerable} cố tình chứa lỗ hổng để minh họa tấn công trong môi trường lab và nhóm \texttt{/secure} áp dụng các biện pháp bảo vệ như kiểm tra JWT chuẩn, kiểm tra quyền sở hữu tài nguyên, DTO response, whitelist field, validate input, prepared statement, rate limiting, SSRF guard, logging và cảnh báo.
+
+Kết quả thực nghiệm cho thấy các tấn công có thể khai thác thành công trên bản vulnerable nhưng bị chặn hoặc giảm thiểu rõ ràng trên bản secure. Luận văn cũng xây dựng giao diện demo trực quan giúp so sánh request/response trước và sau khi phòng chống, từ đó làm rõ ý nghĩa thực tiễn của việc thiết kế API an toàn trong microservices.
+
+\textbf{Từ khóa:} API Security, Microservices, OWASP API Security Top 10, JWT, BOLA, SSRF, Rate Limiting.
+\newpage
+
+\tableofcontents
+\newpage
+\listoftables
+\addcontentsline{toc}{chapter}{Danh mục các bảng biểu}
+\newpage
+\listoffigures
+\addcontentsline{toc}{chapter}{Danh mục các hình vẽ}
+\newpage
+
+\chapter*{Danh mục các từ viết tắt}
+\addcontentsline{toc}{chapter}{Danh mục các từ viết tắt}
+\begin{longtable}{p{3cm}p{11cm}}
+\toprule
+\textbf{Từ viết tắt} & \textbf{Ý nghĩa}\\
+\midrule
+API & Application Programming Interface -- giao diện lập trình ứng dụng\\
+JWT & JSON Web Token -- chuẩn token dựa trên JSON\\
+RBAC & Role-Based Access Control -- kiểm soát truy cập dựa trên vai trò\\
+ABAC & Attribute-Based Access Control -- kiểm soát truy cập dựa trên thuộc tính\\
+BOLA & Broken Object Level Authorization -- lỗi phân quyền ở mức đối tượng\\
+BOPLA & Broken Object Property Level Authorization -- lỗi phân quyền ở mức thuộc tính đối tượng\\
+DTO & Data Transfer Object -- đối tượng truyền dữ liệu\\
+SSRF & Server-Side Request Forgery -- giả mạo yêu cầu phía máy chủ\\
+OWASP & Open Worldwide Application Security Project\\
+ZTA & Zero Trust Architecture -- kiến trúc không tin cậy mặc định\\
+\bottomrule
+\end{longtable}
+\newpage
+
+\pagenumbering{arabic}
+
+\chapter{Tổng quan về an toàn API trong kiến trúc Microservices}
+
+\section{Bối cảnh và lý do chọn đề tài}
+API là thành phần trung tâm trong các hệ thống phần mềm hiện đại. Thông qua API, ứng dụng web, ứng dụng di động, hệ thống đối tác và các dịch vụ nội bộ có thể trao đổi dữ liệu với nhau. Khi doanh nghiệp chuyển từ kiến trúc nguyên khối sang microservices, mỗi miền nghiệp vụ thường được tách thành một service độc lập. Sự tách biệt này giúp hệ thống dễ mở rộng, dễ triển khai độc lập và phù hợp với mô hình DevOps. Tuy nhiên, nó cũng làm tăng số lượng endpoint, tăng số lượng luồng giao tiếp và mở rộng bề mặt tấn công.
+
+Theo OWASP API Security Top 10 2023, các API thường để lộ endpoint xử lý định danh đối tượng và cần kiểm tra phân quyền ở mọi chức năng truy cập dữ liệu bằng định danh từ người dùng \cite{owaspbola}. Đây là một vấn đề rất điển hình trong microservices: API Gateway có thể xác thực request ở biên, nhưng từng service vẫn phải tự kiểm tra quyền đối với tài nguyên nghiệp vụ mà service sở hữu.
+
+Trong thực tế, nhiều lỗi API không xuất phát từ thuật toán phức tạp mà từ các quyết định triển khai nhỏ: trả nguyên entity từ database, tin tưởng dữ liệu trong token mà không verify đầy đủ, không kiểm tra \texttt{user\_id} của tài nguyên, cho phép người dùng gửi mọi trường khi cập nhật hồ sơ, hoặc để service gọi URL do người dùng nhập. Các lỗi này có thể dẫn đến lộ dữ liệu, leo thang quyền, truy cập tài nguyên của người khác, gây quá tải hoặc truy cập trái phép vào mạng nội bộ.
+
+Vì vậy, đề tài ``Nghiên cứu giải pháp phát hiện và phòng chống tấn công API trong hệ thống Microservices dựa trên OWASP API Security Top 10'' có tính cấp thiết cả về mặt khoa học và thực tiễn. Đề tài cho phép kết hợp nghiên cứu lý thuyết, xây dựng hệ thống thử nghiệm, mô phỏng tấn công, vá lỗi và đánh giá kết quả.
+
+\section{Mục tiêu nghiên cứu}
+Mục tiêu tổng quát của luận văn là nghiên cứu các dạng tấn công phổ biến nhắm vào API trong kiến trúc microservices và xây dựng giải pháp phát hiện, phòng chống phù hợp với hệ thống thực nghiệm.
+
+Các mục tiêu cụ thể gồm:
+\begin{itemize}
+  \item Hệ thống hóa cơ sở lý thuyết về API, microservices, API Gateway, JWT, kiểm soát truy cập và các rủi ro API theo OWASP API Security Top 10 2023.
+  \item Lựa chọn các nhóm tấn công API tiêu biểu có khả năng mô phỏng rõ trong lab.
+  \item Thiết kế hệ thống microservices demo có cả endpoint vulnerable và endpoint secure.
+  \item Phân tích cách khai thác, nguyên nhân và ảnh hưởng của từng lỗ hổng.
+  \item Đề xuất và triển khai các biện pháp phòng chống ở tầng Gateway và tầng service.
+  \item Đánh giá kết quả trước và sau khi áp dụng biện pháp bảo vệ.
+\end{itemize}
+
+\section{Đối tượng và phạm vi nghiên cứu}
+Đối tượng nghiên cứu là các API REST trong hệ thống microservices, tập trung vào vấn đề xác thực, phân quyền, kiểm soát dữ liệu phản hồi, kiểm soát input, giới hạn tài nguyên và kiểm soát kết nối outbound.
+
+Phạm vi nghiên cứu gồm:
+\begin{itemize}
+  \item Hệ thống demo quy mô nhỏ gồm Auth Service, User Service, Product Service, Order Service, Payment Service và API Gateway.
+  \item Các tấn công được thực hiện trong môi trường lab cục bộ, không áp dụng lên hệ thống thật khi chưa được phép.
+  \item Không triển khai toàn bộ hạ tầng production như Kubernetes, service mesh, mTLS toàn hệ thống hoặc SIEM thương mại.
+  \item Tập trung vào tính đúng đắn của cơ chế phòng chống và khả năng minh họa trực quan.
+\end{itemize}
+
+\section{Phương pháp nghiên cứu}
+Luận văn sử dụng các phương pháp:
+\begin{itemize}
+  \item Nghiên cứu tài liệu: OWASP API Security Top 10 2023, RFC 7519, RFC 8725, NIST SP 800-207 và tài liệu về microservices.
+  \item Phân tích mô hình: xác định tài sản cần bảo vệ, bề mặt tấn công và vị trí áp dụng kiểm soát.
+  \item Thực nghiệm: xây dựng lab, tạo lỗ hổng, khai thác, vá lỗi và chạy lại kịch bản.
+  \item So sánh: đối chiếu phản hồi API, mã trạng thái HTTP, dữ liệu bị lộ và log trước/sau khi vá.
+\end{itemize}
+
+\section{Cấu trúc luận văn}
+Luận văn gồm 6 chương:
+\begin{itemize}
+  \item Chương 1 trình bày tổng quan và lý do chọn đề tài.
+  \item Chương 2 trình bày cơ sở lý thuyết về microservices, API Gateway, JWT, Zero Trust và OWASP API Security Top 10.
+  \item Chương 3 đề xuất mô hình phòng chống tấn công API.
+  \item Chương 4 trình bày thiết kế và cài đặt hệ thống thực nghiệm.
+  \item Chương 5 phân tích các kịch bản tấn công và giải pháp phòng chống.
+  \item Chương 6 đánh giá kết quả, nêu hạn chế và hướng phát triển.
+\end{itemize}
+
+\chapter{Cơ sở lý thuyết}
+
+\section{API và kiến trúc Microservices}
+API là giao diện cho phép các thành phần phần mềm tương tác với nhau thông qua một tập quy tắc và định dạng dữ liệu xác định. REST API thường sử dụng HTTP method như \texttt{GET}, \texttt{POST}, \texttt{PATCH}, \texttt{DELETE} kết hợp với tài nguyên định danh bằng URL.
+
+Microservices là phong cách kiến trúc chia hệ thống thành nhiều dịch vụ nhỏ, mỗi dịch vụ đảm nhiệm một miền nghiệp vụ và có thể triển khai độc lập. Ưu điểm của microservices là khả năng mở rộng theo từng thành phần, giảm phụ thuộc triển khai và phù hợp với tổ chức phát triển theo nhóm. Tuy nhiên, nhược điểm là tăng độ phức tạp giao tiếp mạng, tăng yêu cầu giám sát, đồng bộ chính sách bảo mật và xử lý lỗi phân tán.
+
+\section{API Gateway}
+API Gateway là điểm vào thống nhất cho client. Gateway có thể thực hiện định tuyến, giới hạn tốc độ, kiểm tra kích thước payload, timeout, ghi log, thêm request id và trong một số trường hợp kiểm tra xác thực ban đầu. Tuy nhiên, Gateway không thay thế hoàn toàn kiểm soát bảo mật ở từng service. Với microservices, nguyên tắc quan trọng là: kiểm tra tại biên là cần thiết, nhưng phân quyền nghiệp vụ phải được thực hiện tại service sở hữu dữ liệu.
+
+\section{JSON Web Token}
+JSON Web Token là định dạng biểu diễn claims gọn, phù hợp truyền trong HTTP Authorization header hoặc URI query parameter \cite{jwt7519}. JWT thường gồm ba phần: header, payload và signature. Một JWT an toàn cần được kiểm tra:
+\begin{itemize}
+  \item Chữ ký và thuật toán ký.
+  \item Thời hạn \texttt{exp}.
+  \item Issuer \texttt{iss}.
+  \item Audience \texttt{aud}.
+  \item Các claims nghiệp vụ như \texttt{sub}, \texttt{role}, scope.
+\end{itemize}
+
+RFC 8725 nhấn mạnh các thực hành tốt khi triển khai JWT, trong đó có tránh nhầm lẫn thuật toán, kiểm tra đầy đủ claims và không sử dụng token theo cách vượt quá mục đích thiết kế \cite{jwt8725}. Trong bối cảnh API Security, lỗi phổ biến là chỉ decode token mà không verify, dùng secret yếu, token không có thời hạn hoặc tin tuyệt đối vào role trong token mà không kiểm tra quyền theo tài nguyên.
+
+\section{Zero Trust trong bảo vệ API}
+NIST SP 800-207 mô tả Zero Trust là cách tiếp cận chuyển trọng tâm bảo vệ từ vành đai mạng tĩnh sang người dùng, tài sản và tài nguyên \cite{nist207}. Với API trong microservices, điều này có nghĩa là:
+\begin{itemize}
+  \item Không tin cậy mặc định vào request chỉ vì nó đến từ mạng nội bộ.
+  \item Xác thực và phân quyền mọi request.
+  \item Áp dụng chính sách truy cập theo tài nguyên cụ thể.
+  \item Ghi log, giám sát và đánh giá rủi ro liên tục.
+\end{itemize}
+
+\section{OWASP API Security Top 10 2023}
+OWASP API Security Top 10 2023 cung cấp danh sách các nhóm rủi ro phổ biến đối với API hiện đại \cite{owasptop10}. Luận văn lựa chọn các nhóm sau để thực nghiệm:
+
+\begin{longtable}{p{4.2cm}p{5cm}p{5cm}}
+\caption{Các nhóm rủi ro OWASP được lựa chọn trong luận văn}\\
+\toprule
+\textbf{Nhóm rủi ro} & \textbf{Ý nghĩa} & \textbf{Minh họa trong lab}\\
+\midrule
+API1: Broken Object Level Authorization & Thiếu kiểm tra quyền truy cập đối tượng cụ thể & Alice sửa \texttt{orderId} để xem đơn hàng của Bob\\
+API2: Broken Authentication & Cơ chế xác thực yếu hoặc triển khai sai & Token yếu, không có hạn, middleware chỉ decode\\
+API3: Broken Object Property Level Authorization & Trả hoặc cho sửa thuộc tính không được phép & Lộ \texttt{password\_hash}, \texttt{api\_key}; cập nhật \texttt{role}\\
+API7: Server Side Request Forgery & Service gọi URL do user kiểm soát & Payment callback gọi \texttt{localhost}\\
+API4: Unrestricted Resource Consumption & Không giới hạn tài nguyên tiêu thụ & Thiếu rate limit ở login/search/callback\\
+Injection & Input làm thay đổi câu truy vấn hoặc lệnh & Payload tìm kiếm bị nhúng vào SQL\\
+\bottomrule
+\end{longtable}
+
+\chapter{Mô hình phát hiện và phòng chống tấn công API}
+
+\section{Nguyên tắc thiết kế}
+Mô hình phòng chống được đề xuất dựa trên các nguyên tắc:
+\begin{itemize}
+  \item Phòng thủ nhiều lớp: kết hợp Gateway, middleware và kiểm tra nghiệp vụ tại service.
+  \item Least privilege: người dùng chỉ được truy cập tài nguyên và thuộc tính cần thiết.
+  \item Explicit authorization: mọi truy cập dữ liệu bằng object id phải kiểm tra ownership hoặc policy.
+  \item Secure by default: endpoint mặc định dùng validate input, DTO output, prepared statement và rate limit.
+  \item Observable security: mọi hành vi bị chặn cần được ghi log đủ ngữ cảnh để điều tra.
+\end{itemize}
+
+\section{Kiến trúc đề xuất}
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[
+  node distance=1.2cm,
+  box/.style={rectangle,draw,rounded corners,minimum width=3.4cm,minimum height=0.85cm,align=center},
+  db/.style={cylinder,draw,shape border rotate=90,aspect=0.25,minimum width=2.4cm,minimum height=1.1cm,align=center},
+  arrow/.style={-Latex,thick}
+]
+\node[box] (client) {Client / UI / Postman};
+\node[box,below=of client] (gateway) {API Gateway\\Rate limit, timeout, log};
+\node[box,below=of gateway] (authz) {Service Middleware\\JWT verify, validation};
+\node[box,below left=1cm and 2.8cm of authz] (business) {Business Policy\\Ownership, RBAC/ABAC};
+\node[box,below right=1cm and 2.8cm of authz] (output) {Output Control\\DTO, field filtering};
+\node[db,below=1.8cm of authz] (dbnode) {Database};
+\draw[arrow] (client) -- (gateway);
+\draw[arrow] (gateway) -- (authz);
+\draw[arrow] (authz) -- (business);
+\draw[arrow] (authz) -- (output);
+\draw[arrow] (business) -- (dbnode);
+\draw[arrow] (output) -- (dbnode);
+\end{tikzpicture}
+\caption{Mô hình phòng chống nhiều lớp cho API trong microservices}
+\end{figure}
+
+\section{Kiểm soát tại API Gateway}
+Gateway chịu trách nhiệm giảm tải rủi ro ở lớp biên:
+\begin{itemize}
+  \item Rate limit theo IP hoặc token.
+  \item Timeout kết nối và timeout đọc response.
+  \item Giới hạn kích thước request body.
+  \item Ghi access log với request id.
+  \item Định tuyến request tới service tương ứng.
+\end{itemize}
+
+\section{Kiểm soát tại service}
+Từng service triển khai:
+\begin{itemize}
+  \item Verify JWT bằng secret/public key và kiểm tra \texttt{exp}, \texttt{iss}, \texttt{aud}.
+  \item Validate input bằng schema.
+  \item Kiểm tra ownership với tài nguyên có chủ sở hữu.
+  \item Áp dụng RBAC/ABAC khi chức năng phụ thuộc vai trò hoặc thuộc tính.
+  \item Dùng prepared statement/ORM an toàn.
+  \item Trả response qua DTO thay vì entity database.
+  \item Ghi log các request bị chặn.
+\end{itemize}
+
+\section{Kiểm soát kết nối outbound}
+Đối với các chức năng callback hoặc webhook, service cần:
+\begin{itemize}
+  \item Chỉ cho phép scheme \texttt{http} hoặc \texttt{https} nếu thật sự cần.
+  \item Dùng allowlist domain.
+  \item Resolve DNS và chặn private IP, loopback, link-local.
+  \item Đặt timeout ngắn.
+  \item Không trả toàn bộ nội dung response từ URL bên ngoài về client.
+\end{itemize}
+
+\chapter{Thiết kế và xây dựng hệ thống thực nghiệm}
+
+\section{Kiến trúc hệ thống}
+Hệ thống thực nghiệm gồm 5 service nghiệp vụ và một API Gateway:
+\begin{itemize}
+  \item Auth Service: đăng nhập và phát hành JWT.
+  \item User Service: xem/cập nhật hồ sơ người dùng.
+  \item Product Service: tìm kiếm sản phẩm.
+  \item Order Service: xem thông tin đơn hàng.
+  \item Payment Service: preview callback thanh toán giả lập.
+  \item API Gateway: định tuyến, rate limit, timeout và access log.
+\end{itemize}
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[
+  node distance=1.15cm,
+  box/.style={rectangle,draw,rounded corners,minimum width=3.1cm,minimum height=0.8cm,align=center},
+  db/.style={cylinder,draw,shape border rotate=90,aspect=0.25,minimum width=2.1cm,minimum height=1.05cm,align=center},
+  arrow/.style={-Latex,thick}
+]
+\node[box] (client) {UI demo / Script lab};
+\node[box,below=of client] (gateway) {API Gateway};
+\node[box,below left=1cm and 4.0cm of gateway] (auth) {Auth Service};
+\node[box,below left=1cm and 1.8cm of gateway] (user) {User Service};
+\node[box,below=1cm of gateway] (product) {Product Service};
+\node[box,below right=1cm and 1.8cm of gateway] (order) {Order Service};
+\node[box,below right=1cm and 4.0cm of gateway] (payment) {Payment Service};
+\node[db,below=1.8cm of product] (dbnode) {PostgreSQL};
+\draw[arrow] (client) -- (gateway);
+\draw[arrow] (gateway) -- (auth);
+\draw[arrow] (gateway) -- (user);
+\draw[arrow] (gateway) -- (product);
+\draw[arrow] (gateway) -- (order);
+\draw[arrow] (gateway) -- (payment);
+\draw[arrow] (auth) -- (dbnode);
+\draw[arrow] (user) -- (dbnode);
+\draw[arrow] (product) -- (dbnode);
+\draw[arrow] (order) -- (dbnode);
+\end{tikzpicture}
+\caption{Kiến trúc hệ thống thực nghiệm}
+\end{figure}
+
+\section{Thiết kế endpoint}
+Mỗi nhóm chức năng có hai phiên bản endpoint:
+\begin{itemize}
+  \item \texttt{/vulnerable/...}: phiên bản cố tình chứa lỗi để minh họa tấn công.
+  \item \texttt{/secure/...}: phiên bản đã áp dụng biện pháp phòng chống.
+\end{itemize}
+
+\begin{longtable}{p{4cm}p{5cm}p{5cm}}
+\caption{Endpoint thực nghiệm chính}\\
+\toprule
+\textbf{Chức năng} & \textbf{Endpoint vulnerable} & \textbf{Endpoint secure}\\
+\midrule
+Đăng nhập & \texttt{POST /vulnerable/auth/login} & \texttt{POST /secure/auth/login}\\
+Xem user & \texttt{GET /vulnerable/users/\{id\}} & \texttt{GET /secure/users/me}\\
+Cập nhật user & \texttt{PATCH /vulnerable/users/me} & \texttt{PATCH /secure/users/me}\\
+Tìm kiếm product & \texttt{GET /vulnerable/products/search} & \texttt{GET /secure/products/search}\\
+Xem order & \texttt{GET /vulnerable/orders/\{id\}} & \texttt{GET /secure/orders/\{id\}}\\
+Payment callback & \texttt{POST /vulnerable/payments/preview-callback} & \texttt{POST /secure/payments/preview-callback}\\
+\bottomrule
+\end{longtable}
+
+\section{Dữ liệu thực nghiệm}
+Lab sử dụng ba người dùng mẫu:
+\begin{itemize}
+  \item Alice: người dùng thường.
+  \item Bob: người dùng thường, sở hữu một đơn hàng riêng.
+  \item Admin: tài khoản quản trị.
+\end{itemize}
+
+Dữ liệu sản phẩm và đơn hàng được tạo cố định để kịch bản tấn công có thể lặp lại. Ví dụ, Alice dùng token hợp lệ của mình để gọi API xem đơn hàng của Bob bằng \texttt{bobOrderId}.
+
+\section{Giao diện demo trực quan}
+Ngoài script tự động, luận văn xây dựng UI demo tại \texttt{http://localhost:8081}. UI cho phép chọn từng kịch bản, bấm \texttt{Run selected} hoặc \texttt{Run all}, sau đó hiển thị hai cột:
+\begin{itemize}
+  \item Vulnerable: request/response của endpoint có lỗi.
+  \item Secure: request/response của endpoint đã vá.
+\end{itemize}
+
+Các chỉ số trên UI gồm tổng số kịch bản, số kịch bản đã chạy, số lần khai thác thành công trên bản vulnerable và số lần bản secure chặn được tấn công.
+
+\chapter{Phân tích tấn công và giải pháp phòng chống}
+
+\section{Broken Object Level Authorization}
+\subsection{Mô tả tấn công}
+Broken Object Level Authorization xảy ra khi API cho phép truy cập đối tượng bằng một định danh do người dùng cung cấp nhưng không kiểm tra người dùng có quyền với đối tượng đó hay không. OWASP nhận định các endpoint xử lý object identifier tạo ra bề mặt tấn công lớn và cần kiểm tra phân quyền đối tượng trong mọi chức năng truy cập dữ liệu \cite{owaspbola}.
+
+Trong lab, Alice đăng nhập hợp lệ nhưng gọi:
+\begin{lstlisting}
+GET /vulnerable/orders/90000000-0000-4000-8000-000000000002
+\end{lstlisting}
+Đây là \texttt{orderId} của Bob. Endpoint vulnerable chỉ kiểm tra có token mà không kiểm tra ownership, nên trả \texttt{HTTP 200} và lộ đơn hàng của Bob.
+
+\subsection{Nguyên nhân}
+Nguyên nhân là nhầm lẫn giữa xác thực và phân quyền. Token hợp lệ chỉ chứng minh danh tính, không chứng minh người dùng có quyền truy cập mọi object id.
+
+\subsection{Biện pháp phòng chống}
+Endpoint secure lấy \texttt{user\_id} của order từ database, so sánh với \texttt{sub} trong JWT. Nếu khác và người dùng không phải admin, API trả:
+\begin{lstlisting}
+HTTP 403
+{
+  "error": "ownership_required",
+  "message": "Order belongs to another user"
+}
+\end{lstlisting}
+
+\section{Broken Authentication}
+\subsection{Mô tả tấn công}
+Broken Authentication xuất hiện khi cơ chế xác thực triển khai sai hoặc quá yếu. Trong lab, endpoint vulnerable phát hành token không có \texttt{exp}, không kiểm tra issuer/audience, và middleware chỉ decode token thay vì verify.
+
+\subsection{Ảnh hưởng}
+Kẻ tấn công có thể lợi dụng token tồn tại quá lâu hoặc token không được kiểm tra chữ ký đầy đủ để duy trì truy cập trái phép. Với microservices, lỗi xác thực có thể lan rộng nếu nhiều service cùng tin vào token yếu.
+
+\subsection{Biện pháp phòng chống}
+Bản secure phát hành JWT có thời hạn 15 phút, có \texttt{iss}, \texttt{aud}, và verify bằng secret phù hợp. Việc triển khai tuân theo nguyên tắc của RFC 7519 và các khuyến nghị bảo mật của RFC 8725 \cite{jwt7519,jwt8725}.
+
+\section{Excessive Data Exposure}
+\subsection{Mô tả tấn công}
+Endpoint vulnerable trả nguyên user entity:
+\begin{lstlisting}
+GET /vulnerable/users/{bobUserId}
+\end{lstlisting}
+Response chứa các trường nhạy cảm như:
+\begin{lstlisting}
+password
+password_hash
+api_key
+internal_note
+\end{lstlisting}
+
+\subsection{Nguyên nhân}
+Nguyên nhân là backend trả trực tiếp object từ database ra client. Đây là lỗi phổ biến khi lập trình viên cho rằng client sẽ tự bỏ qua trường không cần thiết, trong khi thực tế mọi trường trong response đều có thể bị attacker đọc.
+
+\subsection{Biện pháp phòng chống}
+Bản secure dùng DTO:
+\begin{lstlisting}
+{
+  "id": "...",
+  "email": "alice@example.com",
+  "display_name": "Alice Nguyen",
+  "role": "user",
+  "created_at": "..."
+}
+\end{lstlisting}
+Như vậy API vẫn trả \texttt{HTTP 200} nếu request hợp lệ, nhưng dữ liệu nhạy cảm không còn xuất hiện trong response.
+
+\section{Mass Assignment}
+\subsection{Mô tả tấn công}
+Mass Assignment xảy ra khi API nhận quá rộng các trường từ request body và cập nhật trực tiếp vào entity. Trong lab, Alice gửi:
+\begin{lstlisting}
+PATCH /vulnerable/users/me
+{
+  "display_name": "Alice Lab",
+  "role": "admin"
+}
+\end{lstlisting}
+Bản vulnerable nhận trường \texttt{role} và cập nhật Alice thành admin.
+
+\subsection{Biện pháp phòng chống}
+Bản secure dùng schema strict và whitelist field. Chỉ trường \texttt{display\_name} được phép cập nhật. Nếu request chứa \texttt{role}, API trả \texttt{HTTP 400} với lỗi validation.
+
+\section{Injection}
+\subsection{Mô tả tấn công}
+Injection xảy ra khi input của người dùng được ghép trực tiếp vào câu lệnh truy vấn. Trong lab, payload:
+\begin{lstlisting}
+%' OR true --
+\end{lstlisting}
+bị nhúng vào SQL của endpoint vulnerable:
+\begin{lstlisting}
+where name ilike '%%' OR true --%'
+\end{lstlisting}
+Kết quả là API trả toàn bộ sản phẩm.
+
+\subsection{Biện pháp phòng chống}
+Bản secure sử dụng prepared statement với placeholder:
+\begin{lstlisting}
+where name ilike $1 or sku ilike $1 or description ilike $1
+\end{lstlisting}
+Payload trở thành dữ liệu tìm kiếm, không còn thay đổi logic SQL.
+
+\section{Unrestricted Resource Consumption}
+\subsection{Mô tả tấn công}
+Nếu không giới hạn tài nguyên, attacker có thể gửi nhiều request tới login, search hoặc callback để tiêu tốn CPU, kết nối database và băng thông. OWASP API Security Top 10 2023 xem tiêu thụ tài nguyên không kiểm soát là một rủi ro quan trọng đối với API \cite{owasptop10}.
+
+\subsection{Biện pháp phòng chống}
+Lab áp dụng rate limiting tại Gateway và middleware service, đồng thời đặt timeout cho các luồng outbound. Trong triển khai thực tế, có thể bổ sung quota theo user, circuit breaker và hàng đợi cho tác vụ nặng.
+
+\section{Server-Side Request Forgery}
+\subsection{Mô tả tấn công}
+SSRF xảy ra khi service nhận URL từ người dùng rồi tự thực hiện request tới URL đó. Trong lab:
+\begin{lstlisting}
+POST /vulnerable/payments/preview-callback
+{
+  "callbackUrl": "http://localhost:3001/health"
+}
+\end{lstlisting}
+Nếu không kiểm soát, attacker có thể ép service gọi tới tài nguyên nội bộ.
+
+\subsection{Biện pháp phòng chống}
+Bản secure kiểm tra:
+\begin{itemize}
+  \item URL hợp lệ và scheme cho phép.
+  \item Host thuộc allowlist.
+  \item DNS không trỏ về private IP hoặc loopback.
+  \item Timeout ngắn.
+\end{itemize}
+Khi request tới localhost, API trả \texttt{HTTP 403}.
+
+\chapter{Đánh giá thực nghiệm}
+
+\section{Môi trường thực nghiệm}
+Môi trường thực nghiệm gồm:
+\begin{itemize}
+  \item Backend: Node.js/Express.
+  \item Cơ sở dữ liệu: PostgreSQL trong bản Docker Compose, dữ liệu mô phỏng trong bản local lab.
+  \item Gateway: Nginx trong bản Docker Compose, Express static/API trong bản local lab.
+  \item Kiểm thử: script tự động \texttt{scripts/attack-lab.js} và UI trực quan.
+\end{itemize}
+
+\section{Kết quả thực nghiệm}
+Kết quả chạy script lab cho thấy các endpoint vulnerable có thể khai thác thành công, trong khi endpoint secure chặn hoặc giảm thiểu tấn công.
+
+\begin{longtable}{p{3.5cm}p{4.4cm}p{4.4cm}p{2.2cm}}
+\caption{So sánh kết quả trước và sau khi phòng chống}\\
+\toprule
+\textbf{Kịch bản} & \textbf{Bản vulnerable} & \textbf{Bản secure} & \textbf{Đánh giá}\\
+\midrule
+BOLA & Alice xem được order của Bob, \texttt{HTTP 200} & Trả \texttt{HTTP 403 ownership\_required} & Đạt\\
+Broken Authentication & Token yếu, không hết hạn, middleware decode & Token có \texttt{exp}, \texttt{iss}, \texttt{aud}, verify chữ ký & Đạt\\
+Excessive Data Exposure & Lộ \texttt{password}, \texttt{password\_hash}, \texttt{api\_key}, \texttt{internal\_note} & Response DTO không có trường nhạy cảm & Đạt\\
+Mass Assignment & Gửi \texttt{role=admin} thành công & Schema strict reject field \texttt{role}, \texttt{HTTP 400} & Đạt\\
+Injection & Payload bị nhúng vào SQL, trả toàn bộ sản phẩm & Payload là dữ liệu tìm kiếm, trả danh sách rỗng & Đạt\\
+Resource Consumption & Không có giới hạn rõ ở endpoint lỗi & Rate limit và timeout ở endpoint secure/Gateway & Đạt\\
+SSRF & Service chấp nhận URL do user nhập & Chặn localhost/private target, \texttt{HTTP 403} & Đạt\\
+\bottomrule
+\end{longtable}
+
+\section{Phân tích kết quả}
+Đối với BOLA, kết quả chứng minh việc xác thực không đủ để bảo vệ dữ liệu. Kiểm tra ownership là bắt buộc ở service sở hữu tài nguyên. Đối với Excessive Data Exposure, endpoint secure vẫn trả \texttt{HTTP 200}, nhưng dữ liệu nhạy cảm đã được lọc. Điều này cho thấy không phải biện pháp bảo vệ nào cũng thể hiện bằng việc chặn request; nhiều biện pháp bảo vệ nằm ở việc kiểm soát nội dung response.
+
+Đối với Mass Assignment, việc dùng schema strict và whitelist field giúp ngăn leo thang quyền. Đối với Injection, prepared statement loại bỏ khả năng input trở thành một phần cú pháp SQL. Đối với SSRF, allowlist và chặn private IP giúp ngăn service bị lợi dụng làm proxy truy cập mạng nội bộ.
+
+\section{Đánh giá ưu điểm}
+Giải pháp có các ưu điểm:
+\begin{itemize}
+  \item Dễ minh họa nhờ cùng một nghiệp vụ có hai endpoint vulnerable và secure.
+  \item Áp dụng nhiều lớp bảo vệ, không phụ thuộc duy nhất vào Gateway.
+  \item Các biện pháp phòng chống gần với thực tế triển khai backend.
+  \item UI trực quan giúp trình bày rõ sự khác biệt trước/sau.
+\end{itemize}
+
+\section{Hạn chế}
+Luận văn còn một số hạn chế:
+\begin{itemize}
+  \item Lab quy mô nhỏ, chưa phản ánh toàn bộ độ phức tạp của hệ thống production.
+  \item Chưa triển khai Kubernetes, service mesh, mTLS và observability đầy đủ.
+  \item Chưa đo hiệu năng bằng công cụ tải lớn như k6 hoặc JMeter.
+  \item Chưa tích hợp SIEM hoặc hệ thống cảnh báo thời gian thực.
+\end{itemize}
+
+\chapter{Kết luận và hướng phát triển}
+
+\section{Kết luận}
+Luận văn đã nghiên cứu các rủi ro tấn công API trong kiến trúc microservices dựa trên OWASP API Security Top 10 2023 và xây dựng hệ thống thực nghiệm để minh họa. Các kịch bản BOLA, Broken Authentication, Excessive Data Exposure, Mass Assignment, Injection, Unrestricted Resource Consumption và SSRF được triển khai trong môi trường lab với hai phiên bản endpoint: vulnerable và secure.
+
+Kết quả thực nghiệm cho thấy các lỗi API có thể bị khai thác bằng những thao tác tương đối đơn giản như thay đổi object id, thêm field \texttt{role} vào request body, gửi payload injection hoặc cung cấp URL nội bộ. Khi áp dụng các biện pháp như verify JWT đầy đủ, kiểm tra ownership, DTO response, whitelist field, validate input, prepared statement, rate limit và SSRF guard, các tấn công bị chặn hoặc giảm thiểu rõ ràng.
+
+Từ kết quả này có thể rút ra nhận xét: bảo mật API trong microservices không thể chỉ đặt ở API Gateway. Mỗi service cần tự bảo vệ tài nguyên mình quản lý, kiểm soát dữ liệu đầu vào/đầu ra và ghi log các hành vi bất thường. Đây là cách tiếp cận phù hợp với nguyên tắc Zero Trust và thực tiễn phát triển hệ thống phân tán hiện đại.
+
+\section{Hướng phát triển}
+Trong tương lai, đề tài có thể mở rộng theo các hướng:
+\begin{itemize}
+  \item Triển khai lab trên Kubernetes với Ingress Controller hoặc service mesh.
+  \item Bổ sung mTLS giữa các service.
+  \item Tích hợp OpenTelemetry, Grafana Loki/ELK và rule cảnh báo.
+  \item Đo hiệu năng trước/sau khi áp dụng rate limit, validation và logging.
+  \item Mở rộng kịch bản kiểm thử theo đầy đủ OWASP API Security Top 10 2023.
+  \item Xây dựng pipeline DevSecOps tự động kiểm thử API security khi có thay đổi mã nguồn.
+\end{itemize}
+
+\begin{thebibliography}{99}
+
+\bibitem{owasptop10}
+OWASP Foundation (2023), \textit{OWASP API Security Top 10 -- 2023}, \url{https://owasp.org/API-Security/editions/2023/en/0x11-t10/}.
+
+\bibitem{owaspbola}
+OWASP Foundation (2023), \textit{API1:2023 Broken Object Level Authorization}, \url{https://owasp.org/API-Security/editions/2023/en/0xa1-broken-object-level-authorization/}.
+
+\bibitem{owaspbopla}
+OWASP Foundation (2023), \textit{API3:2023 Broken Object Property Level Authorization}, \url{https://owasp.org/API-Security/editions/2023/en/0xa3-broken-object-property-level-authorization/}.
+
+\bibitem{jwt7519}
+Jones M., Bradley J., Sakimura N. (2015), \textit{RFC 7519: JSON Web Token (JWT)}, Internet Engineering Task Force, \url{https://datatracker.ietf.org/doc/html/rfc7519}.
+
+\bibitem{jwt8725}
+Sheffer Y., Hardt D., Jones M. (2020), \textit{RFC 8725: JSON Web Token Best Current Practices}, Internet Engineering Task Force, \url{https://datatracker.ietf.org/doc/html/rfc8725}.
+
+\bibitem{nist207}
+National Institute of Standards and Technology (2020), \textit{NIST Special Publication 800-207: Zero Trust Architecture}, NIST, \url{https://csrc.nist.gov/pubs/sp/800/207/final}.
+
+\bibitem{newman2015}
+Newman S. (2015), \textit{Building Microservices: Designing Fine-Grained Systems}, O'Reilly Media, Sebastopol.
+
+\bibitem{richardson2018}
+Richardson C. (2018), \textit{Microservices Patterns: With examples in Java}, Manning Publications, Shelter Island.
+
+\bibitem{fielding2000}
+Fielding R. T. (2000), \textit{Architectural Styles and the Design of Network-based Software Architectures}, Doctoral dissertation, University of California, Irvine.
+
+\end{thebibliography}
+
+\end{document}
