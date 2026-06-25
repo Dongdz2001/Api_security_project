@@ -6,7 +6,7 @@ File chính:
 proposal/main.tex
 ```
 
-Mẫu này được dựng theo file hướng dẫn trình bày đề cương luận văn thạc sĩ 2017:
+Mẫu này được dựng theo file PDF **Hướng dẫn trình bày đề cương luận văn thạc sĩ 2017**:
 
 - Khổ giấy A4.
 - Font Times New Roman.

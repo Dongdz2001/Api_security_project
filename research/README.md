@@ -9,7 +9,7 @@ research/main.tex
 Nội dung bám theo đề tài:
 
 ```text
-Nghiên cứu giải pháp phát hiện và phòng chống tấn công API trong hệ thống Microservices dựa trên OWASP API Security Top 10
+Phân tích và ngăn chặn các cuộc tấn công nhắm vào API trong kiến trúc Microservices
 ```
 
 Định dạng theo hướng dẫn trình bày đề cương/luận văn:
